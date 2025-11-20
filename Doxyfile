@@ -1,0 +1,25 @@
+# Project info
+PROJECT_NAME           = "CpE/EE 4096/4097 Senior Design SP25/FS25"
+PROJECT_BRIEF          = "CNC Spot Welder for 18650 Battery Cells"
+
+# Output
+OUTPUT_DIRECTORY       = docs
+GENERATE_HTML          = YES
+GENERATE_LATEX         = NO
+
+# Input
+INPUT                  = ./goodEnough/functions.h
+RECURSIVE              = YES
+FILE_PATTERNS          = *.cpp *.h
+
+# Extraction
+EXTRACT_ALL            = YES
+EXTRACT_PRIVATE        = YES
+EXTRACT_STATIC         = YES
+
+# Misc
+QUIET                  = NO
+GENERATE_TREEVIEW      = YES
+FULL_PATH_NAMES        = NO
+INLINE_SOURCES         = YES
+SOURCE_BROWSER         = YES
