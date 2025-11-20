@@ -1,44 +1,10 @@
-#include <AccelStepper.h>
-#include <MultiStepper.h>
-#include <Encoder.h>
-#include <Wire.h> 
-#include <LiquidCrystal_I2C.h>
-#include <Servo.h>
+#include "functions.h"
 
-#define ENABLE_PIN 8
-
-#define MOTOR_X_STEP_PIN 2
-#define MOTOR_X_DIR_PIN 5
-
-#define MOTOR_Y_STEP_PIN 3
-#define MOTOR_Y_DIR_PIN 6
-
-#define MOTOR_Z_STEP_PIN 4
-#define MOTOR_Z_DIR_PIN 7
-
-#define BUTTON_PIN 14
-#define ENC_CW 15
-#define ENC_CCW 16
-
-#define LCD_ROWS 4
-#define LCD_COLUMNS 20
-#define I2C_ADDRESS 0x27
-
-#define LIMIT_Y 10
-#define LIMIT_X 9
-
-#define ONE_TURN 3200
-#define Y_SCALE 0.489048
-#define X_SCALE 2.5358
-#define Y_MOVE 107.8
-#define X_MOVE 539.1
-
-AccelStepper motorX(1, MOTOR_X_STEP_PIN, MOTOR_X_DIR_PIN);
-AccelStepper motorZ(1, MOTOR_Z_STEP_PIN, MOTOR_Z_DIR_PIN);
+AccelStepper motorX1(1, MOTOR_X1_STEP_PIN, MOTOR_X1_DIR_PIN);
+AccelStepper motorX2(1, MOTOR_X2_STEP_PIN, MOTOR_X2_DIR_PIN);
 AccelStepper motorY(1, MOTOR_Y_STEP_PIN, MOTOR_Y_DIR_PIN);
 Encoder myEnc(ENC_CCW, ENC_CW);
 LiquidCrystal_I2C lcd(I2C_ADDRESS, LCD_COLUMNS, LCD_ROWS);
-MultiStepper Xsteppers;
 Servo servo;
 
 unsigned long lastButtonTime = 0;
@@ -61,18 +27,14 @@ void setup() {
   pinMode(ENABLE_PIN, OUTPUT);
   digitalWrite(ENABLE_PIN, LOW);
 
-  motorX.setAcceleration(500);
-  motorX.setMaxSpeed(8000);
+  motorX1.setAcceleration(500);
+  motorX1.setMaxSpeed(8000);
 
-  motorZ.setAcceleration(500);
-  motorZ.setMaxSpeed(8000);
+  motorX2.setAcceleration(500);
+  motorX2.setMaxSpeed(8000);
 
   motorY.setAcceleration(500);
   motorY.setMaxSpeed(10000);
-
-  Xsteppers.addStepper(motorX);
-  Xsteppers.addStepper(motorZ);
-  Xsteppers.addStepper(motorY);
 
   pinMode(LIMIT_X, INPUT_PULLUP);
   pinMode(LIMIT_Y, INPUT_PULLUP);
@@ -99,25 +61,25 @@ void loop() {
   while(digitalRead(LIMIT_Y) == LOW){
     motorY.runSpeed();
   }
-  motorX.setSpeed(1000);
-  motorZ.setSpeed(1000);
+  motorX1.setSpeed(1000);
+  motorX2.setSpeed(1000);
   while(digitalRead(LIMIT_X) == LOW){
-    motorZ.runSpeed();
-    motorX.runSpeed();
+    motorX1.runSpeed();
+    motorX2.runSpeed();
   }
   motorY.setCurrentPosition(0);
-  motorX.setCurrentPosition(0);
-  motorZ.setCurrentPosition(0);
+  motorX1.setCurrentPosition(0);
+  motorX2.setCurrentPosition(0);
 
-  motorX.setSpeed(-1000);
-  motorZ.setSpeed(-1000);
+  motorX1.setSpeed(-1000);
+  motorX2.setSpeed(-1000);
   motorY.setSpeed(500);
 
-  motorX.move(-300);
-  motorZ.move(-300);
-  while(motorX.distanceToGo() != 0 && motorZ.distanceToGo() != 0){
-      motorX.run();
-      motorZ.run();
+  motorX1.move(-300);
+  motorX2.move(-300);
+  while(motorX1.distanceToGo() != 0 && motorX2.distanceToGo() != 0){
+      motorX1.run();
+      motorX2.run();
   }
   motorY.move(250);
   while(motorY.distanceToGo() != 0) {
@@ -170,15 +132,15 @@ void loop() {
     delay(200);
     while (digitalRead(BUTTON_PIN) == HIGH && digitalRead(LIMIT_X) == LOW && digitalRead(LIMIT_Y) == LOW) {
       if (row == 0) {
-        motorX.setSpeed(2000);
-        motorZ.setSpeed(2000);
+        motorX1.setSpeed(2000);
+        motorX2.setSpeed(2000);
         motorY.setSpeed(1000);
         for(int i = 0; i < 3; i++) { //i<16 normally
-          motorX.move(-500);
-          motorZ.move(-500);
-          while(motorX.distanceToGo() != 0 && motorZ.distanceToGo() != 0) {
-            motorX.run();
-            motorZ.run();
+          motorX1.move(-500);
+          motorX2.move(-500);
+          while(motorX1.distanceToGo() != 0 && motorX2.distanceToGo() != 0) {
+            motorX1.run();
+            motorX2.run();
           }
           for(int i = 0; i < 6; i++) { //i<11 normally
             lcd.clear();
